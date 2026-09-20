@@ -1,4 +1,4 @@
-# SenguptaChat
+# SenCrickInfo
 
 A small open-source, local agentic chat loop built with LangGraph, Ollama, FastAPI, and a no-key DuckDuckGo HTML search tool.
 

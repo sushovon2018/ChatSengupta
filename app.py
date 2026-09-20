@@ -129,7 +129,7 @@ def build_graph():
     return graph.compile()
 
 
-app = FastAPI(title="SenguptaChat")
+app = FastAPI(title="SenCrickInfo")
 GRAPH = None
 
 
