@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SenguptaChat Graph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root { --ink: #17211f; --paper: #f4f1e9; --line: #d9d5ca; --muted: #7c827b; --lime: #b6d541; --coral: #ec735a; }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; color: var(--ink); background: radial-gradient(circle at 70% 0%, #fffdf7 0, transparent 32%), var(--paper); font-family: "Space Grotesk", sans-serif; }
+      main { width: min(1100px, calc(100% - 48px)); margin: auto; padding: 42px 0; }
+      nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 26px; border-bottom: 1px solid var(--line); }
+      .brand, .back { color: var(--ink); font: 500 11px "DM Mono", monospace; letter-spacing: .07em; text-decoration: none; }.brand { display: flex; align-items: center; gap: 9px; }.mark { display: grid; width: 26px; height: 26px; place-items: center; border-radius: 50%; background: var(--lime); }
+      .eyebrow { margin: 56px 0 12px; color: var(--muted); font: 500 10px "DM Mono", monospace; letter-spacing: .11em; text-transform: uppercase; } h1 { margin: 0; font-size: clamp(42px, 7vw, 86px); line-height: .95; letter-spacing: -.07em; } h1 em { color: var(--coral); font-style: normal; }.intro { max-width: 550px; margin: 24px 0 46px; color: var(--muted); line-height: 1.6; }
+      .graph-wrap { min-height: 300px; padding: 35px 20px; overflow: auto; border: 1px solid var(--line); background: rgba(255, 253, 247, .55); }.mermaid { min-width: 760px; text-align: center; }.error { color: var(--coral); font: 12px "DM Mono", monospace; }.raw { margin-top: 28px; color: var(--muted); font: 11px/1.5 "DM Mono", monospace; white-space: pre-wrap; }
+      @media (max-width: 600px) { main { width: min(100% - 36px, 1100px); padding-top: 22px; }.eyebrow { margin-top: 42px; }.graph-wrap { padding: 20px 8px; } }
+    </style>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: false, theme: "base", themeVariables: { primaryColor: "#b6d541", primaryTextColor: "#17211f", primaryBorderColor: "#17211f", lineColor: "#ec735a", secondaryColor: "#ebe8de", tertiaryColor: "#f4f1e9", fontFamily: "Space Grotesk" } });
+      const container = document.querySelector(".graph-wrap");
+      try {
+        const response = await fetch("/api/graph");
+        if (!response.ok) throw new Error("The graph endpoint returned an error.");
+        const { mermaid: definition } = await response.json();
+        const diagram = document.createElement("div");
+        diagram.className = "mermaid";
+        diagram.textContent = definition;
+        container.replaceChildren(diagram);
+        await mermaid.run({ nodes: [diagram] });
+      } catch (error) {
+        container.innerHTML = `<p class="error">Could not load the graph: ${error.message}</p>`;
+      }
+    </script>
+  </head>
+  <body>
+    <main>
+      <nav><a class="brand" href="/"><span class="mark">✦</span> SENGUPTACHAT</a><a class="back" href="/">← BACK TO CHAT</a></nav>
+      <p class="eyebrow">Runtime map</p>
+      <h1>See the agent<br /><em>think in loops.</em></h1>
+      <p class="intro">This diagram is generated from the compiled LangGraph workflow. When the model needs fresh context, it moves through the tools node and returns to the agent.</p>
+      <section class="graph-wrap"><p class="error">Loading graph...</p></section>
+    </main>
+  </body>
+</html>
